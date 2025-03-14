@@ -18,10 +18,18 @@ from linebot.v3.webhooks import (
     TextMessageContent
 )
 
+from dotenv import load_dotenv
+load_dotenv()
+
+import os
+CHANNEL_ACCESS_TOKEN = os.getenv("CHANNEL_ACCESS_TOKEN")  # 使用環境變數
+CHANNEL_SECRET = os.getenv("CHANNEL_SECRET")  # 使用環境變數
+
+
 app = Flask(__name__)
 
-configuration = Configuration(access_token='bOj0H84GUEmYeVmGpCPHh1YI0y4kYlHLyiGTQVolvIYtItCvriSkxWv3mAdQ+JuycjRn+S8nonWI+ecqyhz7+GWHoga1JK77uKPaIs5s+ee2e/64BwaMFLXwx9jrWqzs6InvCEN6aIhsg7qQVgV5YQdB04t89/1O/w1cDnyilFU=')
-handler = WebhookHandler('5193d66bc84012753318e7d74c310557')
+configuration = Configuration(access_token='CHANNEL_ACCESS_TOKEN')
+handler = WebhookHandler('CHANNEL_SECRET')
 
 
 @app.route("/callback", methods=['POST'])
