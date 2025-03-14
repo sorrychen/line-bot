@@ -17,16 +17,17 @@ from linebot.v3.webhooks import (
     MessageEvent,
     TextMessageContent
 )
-
+import os
 from dotenv import load_dotenv
-
+from openai import OpenAI
 load_dotenv()
 
-import os
+client = OpenAI(api_key=os.getenv("LINE_BOT_API_KEY"))
+
 
 CHANNEL_ACCESS_TOKEN = os.getenv("CHANNEL_ACCESS_TOKEN")  # 使用環境變數
 CHANNEL_SECRET = os.getenv("CHANNEL_SECRET")  # 使用環境變數
-print(CHANNEL_ACCESS_TOKEN)
+
 
 app = Flask(__name__)
 
@@ -53,15 +54,30 @@ def callback():
     return "OK"
 
 
+def use_gpt(user_message):
+    completion = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": "You are a helpful cafe assistant."},
+            {"role": "user", "content": user_message},
+        ]
+    )
+    gpt_response = completion.choices[0].message.content
+    return gpt_response
+
+
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
     user_message = event.message.text
+
+    gpt_reply = use_gpt(user_message)
+
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
         line_bot_api.reply_message_with_http_info(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
-                messages=[TextMessage(text = reply_message)],
+                messages=[TextMessage(text = gpt_reply)],
             )
         )
 
