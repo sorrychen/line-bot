@@ -1,0 +1,5 @@
+.env
+.cache_ggshield
+my_record.md
+.venv/
+ngrok
