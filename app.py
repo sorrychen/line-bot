@@ -24,9 +24,11 @@ load_dotenv()
 
 client = OpenAI(api_key=os.getenv("LINE_BOT_API_KEY"))
 
+CHANNEL_ACCESS_TOKEN = os.getenv("CHANNEL_ACCESS_TOKEN")  
+CHANNEL_SECRET = os.getenv("CHANNEL_SECRET")  
 
-CHANNEL_ACCESS_TOKEN = os.getenv("CHANNEL_ACCESS_TOKEN")  # 使用環境變數
-CHANNEL_SECRET = os.getenv("CHANNEL_SECRET")  # 使用環境變數
+with open("menu.txt", "r", encoding="UTF-8") as file:
+    menu = file.read().strip()
 
 
 app = Flask(__name__)
@@ -58,7 +60,7 @@ def use_gpt(user_message):
     completion = client.chat.completions.create(
         model="gpt-4o",
         messages=[
-            {"role": "system", "content": "You are a helpful cafe assistant."},
+            {"role": "system", "content": "You are a helpful cafe assistant.我們的類別有: 咖啡飲品 其他飲品 餐點 甜點 特調" + menu},
             {"role": "user", "content": user_message},
         ]
     )
