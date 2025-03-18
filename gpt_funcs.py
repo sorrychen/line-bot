@@ -63,6 +63,10 @@ def get_opening_hours():
     # print("本店的營業時間:" , clean_open_hour)
     return clean_open_hour
 
+def user_mention_name(name):
+    print(f"Hello {name}")
+    return "和使用者打招呼 Hello {name}"
+
 # Step 4: Run
 def wait_for_assistant_run(client, thread_id, assistant_id):
     assistant_r = None
@@ -102,6 +106,8 @@ def wait_for_assistant_run(client, thread_id, assistant_id):
                     output = get_today_date()
                 elif func_name == 'get_opening_hours':
                     output = get_opening_hours()
+                elif func_name == 'user_mention_name':
+                    output = user_mention_name(arguments['name'])
                 else:
                     output = "Function not found"
 

@@ -4,7 +4,7 @@ tools_list = [
         "type": "function",
         "function": {
             'name': 'get_today_date',
-            'description': '當使用扯詢問今日日期時，回傳今日日期',
+            'description': '當使用者詢問今日日期時，回傳今日日期',
         }
     },
     {
@@ -23,6 +23,24 @@ tools_list = [
             "required": []
             }
         }
-    }
+    },
 
+    # 加上參數
+    {
+        "type": "function",
+        "function": {
+            'name': 'user_mention_name',
+            'description': '當使用者提到他的名字時call this function',
+            'parameters': {
+                'type': 'object',
+                'properties': {
+                    'name': {
+                        'type': 'string',
+                        'description': '使用者名字'
+                    }
+                },
+                'required': ['name']
+            }
+        }
+    },
 ]

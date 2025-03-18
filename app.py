@@ -60,19 +60,6 @@ def callback():
 
     return "OK"
 
-
-# def use_gpt(user_message):
-#     completion = client.chat.completions.create(
-#         model="gpt-4o",
-#         messages=[
-#             {"role": "system", "content": "You are a helpful cafe assistant.我們的類別有: 咖啡飲品 其他飲品 餐點 甜點 特調" + menu},
-#             {"role": "user", "content": user_message},
-#         ]
-#     )
-#     gpt_response = completion.choices[0].message.content
-#     return gpt_response
-
-
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
     user_message = event.message.text
