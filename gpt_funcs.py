@@ -9,10 +9,15 @@ with open("menu.txt", "r", encoding="utf-8-sig") as menu:
     menu = menu.read().strip()
 clean_menu = re.sub(r"^[^\w\n]+", "", menu)
 
+
+with open("open_hour.txt", "r", encoding="utf-8-sig") as open_hour:
+    open_hour = open_hour.read().strip()
+clean_open_hour = re.sub(r"^[^\w\n]+", "", open_hour)
+
 GPT_MODEL = "gpt-4o"
 ASSISTANT_NAME = "Cafe Assistant"
-ASSISTANT_INSTRUCTIONS = "You are a helpful cafe assistant. 我們的類別有: 咖啡飲品 其他飲品 餐點 甜點 特調 沒有在菜單上的話說沒有, 菜單內容請讀取 menu.txt"
-ASSISTANT_INSTRUCTION_WHEN_RUN = "You are a helpful cafe assistant. 我們的類別有: 咖啡飲品 其他飲品 餐點 甜點 特調" + clean_menu
+ASSISTANT_INSTRUCTIONS = "You are a helpful cafe assistant. 我們的類別有: 咖啡飲品 其他飲品 餐點 甜點 特調 沒有在菜單上的話說沒有, 菜單內容請讀取 menu.txt, 營業時間請讀取 open_hour.txt"
+ASSISTANT_INSTRUCTION_WHEN_RUN = "You are a helpful cafe assistant. 我們的類別有: 咖啡飲品 其他飲品 餐點 甜點 特調" + clean_menu  + clean_open_hour
 
 load_dotenv()
 GPT_FILE_VECTOR_STORE_ID = os.getenv("GPT_FILE_VECTOR_STORE_ID")
@@ -53,6 +58,11 @@ def add_user_message_to_thread(client, thread_id, msg):
 def get_today_date():
     return time.strftime("%Y-%m-%d")
 
+
+def get_opening_hours():
+    # print("本店的營業時間:" , clean_open_hour)
+    return clean_open_hour
+
 # Step 4: Run
 def wait_for_assistant_run(client, thread_id, assistant_id):
     assistant_r = None
@@ -90,6 +100,8 @@ def wait_for_assistant_run(client, thread_id, assistant_id):
                 # call func
                 if func_name == 'get_today_date':
                     output = get_today_date()
+                elif func_name == 'get_opening_hours':
+                    output = get_opening_hours()
                 else:
                     output = "Function not found"
 
