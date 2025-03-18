@@ -1,15 +1,13 @@
+import json
 import time
 import os 
-from dotenv import load_dotenv
-
 import re
+from dotenv import load_dotenv
+from tools_list import tools_list
 
 with open("menu.txt", "r", encoding="utf-8-sig") as menu:
     menu = menu.read().strip()
 clean_menu = re.sub(r"^[^\w\n]+", "", menu)
-
-
-
 
 GPT_MODEL = "gpt-4o"
 ASSISTANT_NAME = "Cafe Assistant"
@@ -24,7 +22,7 @@ def create_assistant(client):
     assistant = client.beta.assistants.create(
         name=ASSISTANT_NAME,
         instructions=ASSISTANT_INSTRUCTIONS,
-        tools=[{"type": "file_search"}],
+        tools=tools_list,  # 內容多所以直接拉成一個tools_list檔案
         model=GPT_MODEL,
     )
     return assistant.id
@@ -52,6 +50,8 @@ def add_user_message_to_thread(client, thread_id, msg):
     )
     return user_message
 
+def get_today_date():
+    return time.strftime("%Y-%m-%d")
 
 # Step 4: Run
 def wait_for_assistant_run(client, thread_id, assistant_id):
@@ -75,6 +75,34 @@ def wait_for_assistant_run(client, thread_id, assistant_id):
             assistant_r = all_messages.data[0].content[0].text.value
             print(f'Assistant: {assistant_r}')
             break
+        # 要call function的話
+        elif run.status == 'requires_action':
+            required_actions = run.required_action.submit_tool_outputs.model_dump()
+            print(required_actions)
+            tool_outputs = []
+
+            for action in required_actions["tool_calls"]:
+                func_name = action['function']['name']
+                print('Assistant required action:', func_name)
+                if action['function']['arguments']:
+                    arguments = json.loads(action['function']['arguments'])
+                
+                # call func
+                if func_name == 'get_today_date':
+                    output = get_today_date()
+                else:
+                    output = "Function not found"
+
+                tool_outputs.append({
+                    "tool_call_id": action['id'],
+                    "output": output
+                })
+
+                client.beta.threads.runs.submit_tool_outputs(
+                    thread_id=thread_id,
+                    run_id=run.id,
+                    tool_outputs=tool_outputs
+                )
         elif run.status == 'queued' or run.status == 'in_progress':
             pass
         else:
