@@ -1,24 +1,40 @@
 import time
+import os 
+from dotenv import load_dotenv
 
-with open("menu.txt", "r", encoding="UTF-8") as file:
-    menu = file.read().strip()
+import re
+
+with open("menu.txt", "r", encoding="utf-8-sig") as menu:
+    menu = menu.read().strip()
+clean_menu = re.sub(r"^[^\w\n]+", "", menu)
+
+
+
 
 GPT_MODEL = "gpt-4o"
 ASSISTANT_NAME = "Cafe Assistant"
-ASSISTANT_INSTRUCTIONS = "You are a helpful cafe assistant. 我們的類別有: 咖啡飲品 其他飲品 餐點 甜點 特調 沒有在菜單上的話說沒有"+ menu
-ASSISTANT_INSTRUCTION_WHEN_RUN = "You are a helpful cafe assistant. 我們的類別有: 咖啡飲品 其他飲品 餐點 甜點 特調" + menu
+ASSISTANT_INSTRUCTIONS = "You are a helpful cafe assistant. 我們的類別有: 咖啡飲品 其他飲品 餐點 甜點 特調 沒有在菜單上的話說沒有, 菜單內容請讀取 menu.txt"
+ASSISTANT_INSTRUCTION_WHEN_RUN = "You are a helpful cafe assistant. 我們的類別有: 咖啡飲品 其他飲品 餐點 甜點 特調" + clean_menu
 
+load_dotenv()
+GPT_FILE_VECTOR_STORE_ID = os.getenv("GPT_FILE_VECTOR_STORE_ID")
 
 # Step 1: Create an assistant
 def create_assistant(client):
     assistant = client.beta.assistants.create(
         name=ASSISTANT_NAME,
         instructions=ASSISTANT_INSTRUCTIONS,
-        tools=[],
+        tools=[{"type": "file_search"}],
         model=GPT_MODEL,
     )
     return assistant.id
 
+# Update assistant
+def update_assistant(client, assistant_id):
+    assistant = client.beta.assistants.update(
+      assistant_id=assistant_id,
+      tool_resources={"file_search": {"vector_store_ids": [GPT_FILE_VECTOR_STORE_ID]}},
+    )
 
 # Step 2: Create a Thread
 def create_thread(client):

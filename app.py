@@ -20,7 +20,7 @@ from linebot.v3.webhooks import (
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-from gpt_funcs import create_assistant, create_thread, add_user_message_to_thread, wait_for_assistant_run
+from gpt_funcs import create_assistant, create_thread, add_user_message_to_thread, wait_for_assistant_run, update_assistant
 
 load_dotenv()
 
@@ -34,7 +34,7 @@ assistant_id = create_assistant(client)
 # assistant_id = "xxxxxxx" 可以寫死
 thread_id = create_thread(client)
 # thread_id = "xxxxxx"
-
+update_assistant(client, assistant_id)
 
 app = Flask(__name__)
 
