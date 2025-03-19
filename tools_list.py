@@ -8,21 +8,21 @@ tools_list = [
         }
     },
     {
-    "type": "function",
-    "function": {
-        "name": "get_opening_hours",
-        "description": "根據顧客詢問的日期，提供對應的咖啡廳營業時間",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "date": {
-                    "type": "string",
-                    "description": "當顧客詢問營業時間，回傳營業時間"
+        "type": "function",
+        "function": {
+            "name": "get_opening_hours",
+            "description": "根據顧客詢問的日期，提供對應的咖啡廳營業時間",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "description": "當顧客詢問營業時間，回傳營業時間"
+                    }
+                },
+                "required": []
                 }
-            },
-            "required": []
             }
-        }
     },
 
     # 加上參數
