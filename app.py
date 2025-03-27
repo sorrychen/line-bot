@@ -39,7 +39,7 @@ update_assistant(client, assistant_id)
 app = Flask(__name__)
 
 configuration = Configuration(access_token=CHANNEL_ACCESS_TOKEN)
-line_handler = WebhookHandler(CHANNEL_SECRET)
+handler = WebhookHandler(CHANNEL_SECRET)
 
 
 @app.route("/callback", methods=["POST"])
@@ -53,7 +53,7 @@ def callback():
 
     # handle webhook body
     try:
-        line_handler.handle(body, signature)
+        handler.handle(body, signature)
     except InvalidSignatureError:
         app.logger.info("Invalid signature. Please check your channel access token/channel secret.")
         abort(400)
