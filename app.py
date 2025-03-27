@@ -60,7 +60,7 @@ def callback():
 
     return "OK"
 
-@handler.add(MessageEvent, message=TextMessageContent)
+@line_handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
     user_message = event.message.text
     add_user_message_to_thread(client, thread_id, user_message)
